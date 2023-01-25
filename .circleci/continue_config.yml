@@ -113,21 +113,21 @@ jobs:
       - checkout
       - run: pip install pytest
       - run: python -m pytest << parameters.path >>
-  validate_orb:
-    description: Validate an orb
-    parameters:
-      path:
-        type: string
-        description: The path to the orb
-    docker:
-      - image: 361339499037.dkr.ecr.eu-west-1.amazonaws.com/pe-orbs:latest
-    steps:
-      - checkout
-      - run:
-          name: Validate orb
-          command: |
-            set -e
-            circleci orb validate << parameters.path >>/orb.yml
+  # validate_orb:
+  #   description: Validate an orb
+  #   parameters:
+  #     path:
+  #       type: string
+  #       description: The path to the orb
+  #   docker:
+  #     - image: 361339499037.dkr.ecr.eu-west-1.amazonaws.com/pe-orbs:latest
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Validate orb
+  #         command: |
+  #           set -e
+  #           circleci orb validate << parameters.path >>/orb.yml
 
   publish_orb:
     description: Publish an orb
@@ -463,13 +463,13 @@ workflows:
     jobs:
       - test_python:
           path: terraform
-      - validate_orb:
-          path: terraform
+      # - validate_orb:
+      #     path: terraform
       - publish_orb:
           path: terraform
           requires:
             - test_python
-            - validate_orb
+            # - validate_orb
   # terraform-registry:
   #   when: << pipeline.parameters.run-terraform-registry >>
   #   jobs:

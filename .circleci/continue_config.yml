@@ -35,6 +35,7 @@ jobs:
           name: Validate orb
           command: |
             set -e
+            docker login --username $DOCKER_LOGIN --password $DOCKER_PASS
             circleci orb validate << parameters.path >>/orb.yml
 
   publish_orb:

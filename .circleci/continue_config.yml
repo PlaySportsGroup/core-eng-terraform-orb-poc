@@ -27,7 +27,7 @@ jobs:
         type: string
         description: The path to the orb
     docker:
-      - image: playsportsgroup/core-eng-ovo-pre-orb-poc:latest
+      - image: PlaySportsGroup/core-eng-ovo-pre-orb-poc:latest
       
     steps:
       - checkout
@@ -44,7 +44,7 @@ jobs:
         type: string
         description: The path to the orb
     docker:
-      - image: playsportsgroup/core-eng-ovo-pre-orb-poc:latest
+      - image: PlaySportsGroup/core-eng-ovo-pre-orb-poc:latest
     steps:
       - checkout
       - setup_remote_docker:
@@ -76,21 +76,21 @@ jobs:
                   BUILD_TAG="${TAG}_${CIRCLE_BRANCH}_$(date "+%d-%m-%Y")"
               fi
 
-              docker build --tag "playsportsgroup/${ORB}:${BUILD_TAG}" \
+              docker build --tag "PlaySportsGroup/${ORB}:${BUILD_TAG}" \
               --label org.label-schema.vcs-ref="$CIRCLE_SHA1" \
               --label org.label-schema.vcs-url="$CIRCLE_REPOSITORY_URL" \
               --label org.label-schema.schema-version="1.0" \
               --file $path \
               "${ORB}/executor"
 
-              docker push "playsportsgroup/${ORB}:${BUILD_TAG}"
+              docker push "PlaySportsGroup/${ORB}:${BUILD_TAG}"
 
-              DIGEST=$(docker image inspect --format="{{index .RepoDigests 0}}" "playsportsgroup/${ORB}:${BUILD_TAG}")
+              DIGEST=$(docker image inspect --format="{{index .RepoDigests 0}}" "PlaySportsGroup/${ORB}:${BUILD_TAG}")
               echo $DIGEST > "${ORB}_${TAG}_digest.txt"
 
               if [ "$CIRCLE_BRANCH" = "master" ]; then
-                  docker tag "playsportsgroup/${ORB}:${BUILD_TAG}" "playsportsgroup/${ORB}:${TAG}"
-                  docker push "playsportsgroup/${ORB}:${TAG}"
+                  docker tag "PlaySportsGroup/${ORB}:${BUILD_TAG}" "PlaySportsGroup/${ORB}:${TAG}"
+                  docker push "PlaySportsGroup/${ORB}:${TAG}"
               fi
             done
       - run:
@@ -115,32 +115,32 @@ jobs:
 
                 # update the executor image tag to point at the image that was just published
                 DIGEST=$(<"${ORB}_${TAG}_digest.txt")
-                sed -i -e "s|playsportsgroup/${ORB}:$TAG|$DIGEST|" "/tmp/${ORB}_orb.yml"
+                sed -i -e "s|PlaySportsGroup/${ORB}:$TAG|$DIGEST|" "/tmp/${ORB}_orb.yml"
               fi
 
             done
 
             DEV_VERSION=dev:$(echo $CIRCLE_BRANCH | tr / _)
 
-            echo "Creating orb playsportsgroup/${ORB} if it wasn't created before"
-            circleci orb list playsportsgroup | grep -q -F "playsportsgroup/${ORB} " || circleci orb create playsportsgroup/"${ORB}" --no-prompt --token "$CIRCLECI_PROD_TOKEN"
+            echo "Creating orb PlaySportsGroup/${ORB} if it wasn't created before"
+            circleci orb list PlaySportsGroup | grep -q -F "PlaySportsGroup/${ORB} " || circleci orb create PlaySportsGroup/"${ORB}" --no-prompt --token "$CIRCLECI_PROD_TOKEN"
 
-            echo "Publishing branch development-version: playsportsgroup/${ORB}@$DEV_VERSION"
-            circleci orb publish "/tmp/${ORB}_orb.yml" "playsportsgroup/${ORB}@$DEV_VERSION" --token "$CIRCLECI_TOKEN"
+            echo "Publishing branch development-version: PlaySportsGroup/${ORB}@$DEV_VERSION"
+            circleci orb publish "/tmp/${ORB}_orb.yml" "PlaySportsGroup/${ORB}@$DEV_VERSION" --token "$CIRCLECI_TOKEN"
 
             if [ "$CIRCLE_BRANCH" = "master" ]; then
-              echo "Publishing master to playsportsgroup/${ORB}"
+              echo "Publishing master to PlaySportsGroup/${ORB}"
 
-              if ! circleci orb source "playsportsgroup/${ORB}" > "/tmp/${ORB}_current.yml"; then
+              if ! circleci orb source "PlaySportsGroup/${ORB}" > "/tmp/${ORB}_current.yml"; then
                 # This is the first version
-                circleci orb publish promote "playsportsgroup/${ORB}@$DEV_VERSION" major --token "$CIRCLECI_PROD_TOKEN"
+                circleci orb publish promote "PlaySportsGroup/${ORB}@$DEV_VERSION" major --token "$CIRCLECI_PROD_TOKEN"
                 exit 0
               fi
 
               if [[ -f "${ORB}/orb_version.txt" ]]; then
                 # This is a specific version
                 VERSION=$(<"${ORB}/orb_version.txt")
-                CURRENT_VERSION=$(circleci orb info playsportsgroup/${ORB} | grep "Latest" | cut -d' ' -f2)
+                CURRENT_VERSION=$(circleci orb info PlaySportsGroup/${ORB} | grep "Latest" | cut -d' ' -f2)
 
                 if [[ "$VERSION" != "$CURRENT_VERSION" ]]; then
                     circleci orb publish "/tmp/${ORB}_orb.yml" "$VERSION" --token "$CIRCLECI_PROD_TOKEN"
@@ -150,12 +150,12 @@ jobs:
 
               elif ! cmp -s "/tmp/${ORB}_orb.yml" "/tmp/${ORB}_current.yml"; then
                 # This is a new version
-                circleci orb publish increment "/tmp/${ORB}_orb.yml" "playsportsgroup/${ORB}" patch --token "$CIRCLECI_PROD_TOKEN"
+                circleci orb publish increment "/tmp/${ORB}_orb.yml" "PlaySportsGroup/${ORB}" patch --token "$CIRCLECI_PROD_TOKEN"
               fi
             else
               echo "Orb can now be tested using the following circleci config"
               echo "  orbs:"
-              echo "    ${ORB}: playsportsgroup/${ORB}@dev:$CIRCLE_BRANCH"
+              echo "    ${ORB}: PlaySportsGroup/${ORB}@dev:$CIRCLE_BRANCH"
             fi
 
 workflows:

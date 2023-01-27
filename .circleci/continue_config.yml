@@ -27,7 +27,7 @@ jobs:
         type: string
         description: The path to the orb
     docker:
-      - image: PlaySportsGroup/core-eng-ovo-pre-orb-poc:latest
+      - image: playsportsgroup/core-eng-ovo-pre-orb-poc:latest
       
     steps:
       - checkout
@@ -44,7 +44,7 @@ jobs:
         type: string
         description: The path to the orb
     docker:
-      - image: PlaySportsGroup/core-eng-ovo-pre-orb-poc:latest
+      - image: playsportsgroup/core-eng-ovo-pre-orb-poc:latest
     steps:
       - checkout
       - setup_remote_docker:

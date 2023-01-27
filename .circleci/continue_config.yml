@@ -122,25 +122,25 @@ jobs:
 
             DEV_VERSION=dev:$(echo $CIRCLE_BRANCH | tr / _)
 
-            echo "Creating orb psn/${ORB} if it wasn't created before"
-            circleci orb list psn | grep -q -F "psn/${ORB} " || circleci orb create psn/"${ORB}" --no-prompt --token "$CIRCLECI_TOKEN"
+            echo "Creating orb playsportsgroup/${ORB} if it wasn't created before"
+            circleci orb list playsportsgroup | grep -q -F "playsportsgroup/${ORB} " || circleci orb create playsportsgroup/"${ORB}" --no-prompt --token "$CIRCLECI_TOKEN"
 
-            echo "Publishing branch development-version: psn/${ORB}@$DEV_VERSION"
-            circleci orb publish "/tmp/${ORB}_orb.yml" "psn/${ORB}@$DEV_VERSION" --token "$CIRCLECI_TOKEN"
+            echo "Publishing branch development-version: playsportsgroup/${ORB}@$DEV_VERSION"
+            circleci orb publish "/tmp/${ORB}_orb.yml" "playsportsgroup/${ORB}@$DEV_VERSION" --token "$CIRCLECI_TOKEN"
 
             if [ "$CIRCLE_BRANCH" = "master" ]; then
-              echo "Publishing master to psn/${ORB}"
+              echo "Publishing master to playsportsgroup/${ORB}"
 
-              if ! circleci orb source "psn/${ORB}" > "/tmp/${ORB}_current.yml"; then
+              if ! circleci orb source "playsportsgroup/${ORB}" > "/tmp/${ORB}_current.yml"; then
                 # This is the first version
-                circleci orb publish promote "psn/${ORB}@$DEV_VERSION" major --token "$CIRCLECI_TOKEN"
+                circleci orb publish promote "playsportsgroup/${ORB}@$DEV_VERSION" major --token "$CIRCLECI_TOKEN"
                 exit 0
               fi
 
               if [[ -f "${ORB}/orb_version.txt" ]]; then
                 # This is a specific version
                 VERSION=$(<"${ORB}/orb_version.txt")
-                CURRENT_VERSION=$(circleci orb info psn/${ORB} | grep "Latest" | cut -d' ' -f2)
+                CURRENT_VERSION=$(circleci orb info playsportsgroup/${ORB} | grep "Latest" | cut -d' ' -f2)
 
                 if [[ "$VERSION" != "$CURRENT_VERSION" ]]; then
                     circleci orb publish "/tmp/${ORB}_orb.yml" "$VERSION" --token "$CIRCLECI_TOKEN"
@@ -150,12 +150,12 @@ jobs:
 
               elif ! cmp -s "/tmp/${ORB}_orb.yml" "/tmp/${ORB}_current.yml"; then
                 # This is a new version
-                circleci orb publish increment "/tmp/${ORB}_orb.yml" "psn/${ORB}" patch --token "$CIRCLECI_TOKEN"
+                circleci orb publish increment "/tmp/${ORB}_orb.yml" "playsportsgroup/${ORB}" patch --token "$CIRCLECI_TOKEN"
               fi
             else
               echo "Orb can now be tested using the following circleci config"
               echo "  orbs:"
-              echo "    ${ORB}: psn/${ORB}@dev:$CIRCLE_BRANCH"
+              echo "    ${ORB}: playsportsgroup/${ORB}@dev:$CIRCLE_BRANCH"
             fi
 
 workflows:
